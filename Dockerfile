@@ -1,17 +1,19 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.22-alpine AS build
 
 WORKDIR /app
+
+COPY go.mod ./
 
 COPY . .
 
-RUN go build -o main ./cmd/server
+RUN go build -o server ./cmd/server
 
-FROM alpine:latest
+FROM alpine:3.20
 
 WORKDIR /app
 
-COPY --from=builder /app/main .
+COPY --from=build /app/server .
 
 EXPOSE 8080
 
-CMD ["./main"]
+CMD ["./server"]
